@@ -209,34 +209,7 @@ def interactive_mode(mode: str, provider: str | None) -> None:
                 status.update("[dim]◌ Analyzing request...[/dim]")
                 result = pipeline.execute(user_input, mode=mode)
             console.print()
-            console.print(f"[bold cyan]Plan[/bold cyan]")
-            for i, step in enumerate(result.plan.steps, 1):
-                console.print(f"  {i}. {step.name}")
-            console.print()
-            with console.status("[dim]◌ Proceeding...[/dim]", spinner="dots"):
-                time.sleep(1)
-            console.print(f"[green]✓[/green] CPU       23%")
-            console.print(f"[green]✓[/green] Memory    71%")
-            console.print(f"[yellow]⚠[/yellow] Disk      92%")
-            console.print(f"[green]✓[/green] Load      4.81")
-            console.print(f"[green]✓[/green] Docker    17 containers")
-            console.print()
-            console.print(f"[bold red]⚠ Root cause detected[/bold red]")
-            console.print("\nDisk usage is critically high.")
-            console.print("\nTop consumers:")
-            console.print("  Docker       38.2 GB")
-            console.print("  /var/log     11.4 GB")
-            console.print("  /home        8.7 GB")
-            if result.actions and mode != "safe":
-                console.print()
-                console.print(f"[bold yellow]Proposed actions:[/bold yellow]")
-                for action in result.actions:
-                    console.print(f"  {action['id']}. {action['name']}")
-                console.print()
-                console.print(f"Risk: {result.actions[0]['risk'].title()}")
-                console.print()
-                console.print("Apply changes? [y/N]")
-            console.print()
+            console.print(result.response)
         except KeyboardInterrupt:
             continue
         except EOFError:
