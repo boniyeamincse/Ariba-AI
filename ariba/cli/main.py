@@ -73,9 +73,17 @@ def print_status_bar(provider: str, mode: str) -> None:
 
 
 def show_help() -> None:
-    console.print("\n[bold cyan]Commands:[/bold cyan]\n")
-    for cmd in COMMANDS:
-        console.print(f"  {cmd}")
+    console.print("\n[bold cyan]Ariba AI[/bold cyan]\n")
+    console.print("[bold]System[/bold]")
+    console.print("  /scan\n  /status\n")
+    console.print("[bold]Diagnostics[/bold]")
+    console.print("  /logs\n  /docker\n  /network\n")
+    console.print("[bold]Security[/bold]")
+    console.print("  /security\n")
+    console.print("[bold]AI[/bold]")
+    console.print("  /model\n  /tools\n  /history\n")
+    console.print("[bold]Configuration[/bold]")
+    console.print("  /config\n  /help\n")
     console.print("  exit, quit, q\n")
 
 
