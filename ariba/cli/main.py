@@ -94,7 +94,7 @@ def interactive_mode(mode: str, provider: str | None) -> None:
     console.print()
     console.print("[dim]Type your question, /command, or 'exit' to quit[/dim]\n")
 
-    pipeline = Pipeline()
+    pipeline = Pipeline(provider=provider)
     completer = WordCompleter(COMMANDS, ignore_case=True)
 
     while True:
@@ -230,7 +230,7 @@ def ask(query: str | None, file: str | None, provider: str | None) -> None:
         interactive_mode(mode, provider)
         return
     try:
-        pipeline = Pipeline()
+        pipeline = Pipeline(provider=provider)
         mode = click.get_current_context().parent.params.get("mode", "safe")
         result = pipeline.execute(query, mode=mode)
         console.print(result.response)

@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from ariba.intent.classifier import IntentClassifier
-from ariba.planner.planner import Plan, Planner, PlanStep
+from ariba.planner.planner import Plan, Planner
 from ariba.core.engine import Engine
 
 
@@ -30,15 +30,16 @@ class PipelineResult:
 class Pipeline:
     """Orchestrates the conversation → intent → plan → tools → evidence → reasoning → action flow."""
 
-    def __init__(self) -> None:
+    def __init__(self, provider_name: str | None = None) -> None:
         self.classifier = IntentClassifier()
         self.planner = Planner()
         try:
-            self.provider = Engine()._get_provider()
+            self.provider = Engine(provider=provider_name)._get_provider()
             self.has_ai = True
-        except ValueError:
+        except ValueError as e:
             self.provider = None
             self.has_ai = False
+            self.ai_error = str(e)
 
     def execute(self, query: str, mode: str = "safe", context: dict[str, Any] | None = None) -> PipelineResult:
         """Execute the full pipeline for a user query."""
@@ -77,8 +78,8 @@ class Pipeline:
         evidence: dict[str, Any] = {}
 
         for step in plan.steps:
-            step.result = self._execute_tool(step.tool)
-            evidence[step.name] = step.result
+            result = self._execute_tool(step.tool)
+            evidence[step.name] = result
 
         return evidence
 
@@ -110,7 +111,8 @@ class Pipeline:
             return self.provider.ask(prompt, {})
         
         # Fallback if no AI key is set
-        return "Based on the collected server evidence, disk or memory usage might be high. (AI Provider not configured - set OPENAI_API_KEY to enable real AI reasoning)."
+        err = getattr(self, "ai_error", "set OPENAI_API_KEY")
+        return f"Based on the collected server evidence, disk or memory usage might be high. (AI Provider not configured - {err})."
 
     def _propose_actions(self, plan: Plan, evidence: dict[str, Any], reasoning: str, mode: str) -> list[dict[str, Any]]:
         """Propose actions based on findings."""
