@@ -30,13 +30,16 @@ COMMANDS = [
 ]
 
 
-@click.group()
+@click.group(invoke_without_command=True)
 @click.version_option(version="0.1.0", prog_name="ariba")
 @click.option("--safe", "mode", flag_value="safe", default=True)
 @click.option("--plan", "mode", flag_value="plan")
 @click.option("--auto", "mode", flag_value="auto")
-def main(mode: str) -> None:
+@click.pass_context
+def main(ctx: click.Context, mode: str) -> None:
     """Ariba AI - Your AI-powered Linux & DevOps Assistant."""
+    if ctx.invoked_subcommand is None:
+        interactive_mode(mode, None)
 
 
 def print_header() -> None:
